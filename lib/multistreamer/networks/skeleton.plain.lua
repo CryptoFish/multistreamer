@@ -1,4 +1,4 @@
-local Account = require'models.account'
+local Account = require'multistreamer.models.account'
 
 local config = require'multistreamer.config'.get()
 local resty_sha1 = require'resty.sha1'

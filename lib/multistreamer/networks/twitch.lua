@@ -33,8 +33,8 @@ local sleep = ngx.sleep
 
 local IRCClient = require'multistreamer.irc.client'
 
-local Account = require'models.account'
-local StreamAccount = require'models.stream_account'
+local Account = require'multistreamer.models.account'
+local StreamAccount = require'multistreamer.models.stream_account'
 
 local M = {}
 

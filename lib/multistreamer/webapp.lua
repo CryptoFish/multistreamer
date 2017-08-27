@@ -1196,4 +1196,8 @@ for _,m in networks() do
   end
 end
 
+app:get('splat',  '*', function(self)
+  return { redirect_to = self:url_for('site-root') }
+end)
+
 return app

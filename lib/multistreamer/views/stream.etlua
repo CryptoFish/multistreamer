@@ -5,7 +5,7 @@
 <% end %>
 
 <% if stream then %>
-<% render('views.stream-menu', { active_submenu = 'general' }); %>
+<% render('multistreamer.views.stream-menu', { active_submenu = 'general' }); %>
 <% end %>
 
 <form class="pure-form pure-form-aligned" id="the_form" method="post" action="<%= url_for('stream-edit') %><% if stream then %>/<%= stream.id %><% end %>?subset=general" enctype="multipart/form-data">
@@ -27,5 +27,5 @@
 </form>
 
 <% if stream then %>
-<% render('views.stream-functions', { active_submenu = 'general' }); %>
+<% render('multistreamer.views.stream-functions', { active_submenu = 'general' }); %>
 <% end %>

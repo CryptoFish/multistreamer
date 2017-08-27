@@ -40,6 +40,7 @@ http {
 
   init_by_lua_block {
     require'multistreamer.config'.loadconfig(os.getenv('CONFIG_FILE'))
+    package.loaded['models'] = require'multistreamer.models'
   }
 
   init_worker_by_lua_block {
@@ -144,6 +145,11 @@ stream {
   lua_ssl_trusted_certificate <%= ssl_trusted_certificate %>;
   lua_ssl_verify_depth <%= ssl_verify_depth %>;
   lua_resolver <%= dns_resolver %>;
+
+  init_by_lua_block {
+    require'multistreamer.config'.loadconfig(os.getenv('CONFIG_FILE'))
+    package.loaded['models'] = require'multistreamer.models'
+  }
 
   init_worker_by_lua_block {
     start_time = ngx.now()

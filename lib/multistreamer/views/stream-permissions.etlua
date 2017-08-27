@@ -1,6 +1,6 @@
 <h3><%= stream.name %></h3>
 
-<% render('views.stream-menu', { active_submenu = 'permissions' }) %>
+<% render('multistreamer.views.stream-menu', { active_submenu = 'permissions' }) %>
 
 <form class="pure-form pure-form-aligned" id="the_form" method="post" action="<%= url_for('stream-edit', { id = stream.id }) %>?subset=permissions" enctype="multipart/form-data">
 
@@ -30,4 +30,4 @@
 </div>
 </form>
 
-<% render('views.stream-functions', { active_submenu = 'permissions' }) %>
+<% render('multistreamer.views.stream-functions', { active_submenu = 'permissions' }) %>

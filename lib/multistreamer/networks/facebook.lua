@@ -24,8 +24,8 @@ local ngx_err = ngx.ERR
 local ngx_debug = ngx.DEBUG
 local facebook_config = config.networks.facebook
 
-local Account = require'models.account'
-local StreamAccount = require'models.stream_account'
+local Account = require'multistreamer.models.account'
+local StreamAccount = require'multistreamer.models.stream_account'
 
 local M = {}
 
