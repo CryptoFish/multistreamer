@@ -14,6 +14,7 @@ local Stream = require'multistreamer.models.stream'
 local Account = require'multistreamer.models.account'
 local SharedAccount = require'multistreamer.models.shared_account'
 local string = require'multistreamer.string'
+local version = require'multistreamer.version'
 
 local insert = table.insert
 local remove = table.remove
@@ -1088,9 +1089,9 @@ function IRCServer.startClient(sock) -- {{{
   if user then
     local date_fmt = date(start_time):fmt('%a %b %d %Y at %H:%M:%S UTC')
     insert(send_buffer,':{hostname} 001 {nick} :Welcome {nick}!{nick}@{hostname}')
-    insert(send_buffer,':{hostname} 002 {nick} :Your host is {hostname}, running version ' .. config.VERSION)
+    insert(send_buffer,':{hostname} 002 {nick} :Your host is {hostname}, running version ' .. version.STRING)
     insert(send_buffer,':{hostname} 003 {nick} :This server was created ' .. date_fmt)
-    insert(send_buffer,':{hostname} 004 {nick} :{hostname} multistreamer ' .. config.VERSION .. ' o o')
+    insert(send_buffer,':{hostname} 004 {nick} :{hostname} multistreamer ' .. version.STRING .. ' o o')
     insert(send_buffer,':{hostname} 375 {nick} :- {hostname} Message of the day -')
     for _,line in pairs(split(config.irc_motd,'\r?\n')) do
       insert(send_buffer,':{hostname} 372 {nick} :- ' .. line)

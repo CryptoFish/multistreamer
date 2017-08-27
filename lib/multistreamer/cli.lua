@@ -2,6 +2,7 @@ local posix  = require'posix'
 local etlua  = require'etlua'
 local getopt = require'multistreamer.getopt'
 local config = require'multistreamer.config'
+local version = require'multistreamer.version'
 local pgmoon = require'pgmoon'
 local whereami = require'whereami'
 local lfs = require'lfs'
@@ -136,7 +137,7 @@ local function main(args)
   end
 
   if optarg['v'] then
-    io.stderr:write('multistreamer: version ' .. version .. '\n')
+    io.stderr:write('multistreamer version ' .. version.STRING .. '\n')
     return 0
   end
 

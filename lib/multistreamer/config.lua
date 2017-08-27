@@ -3,8 +3,6 @@ local lyaml  = require'lyaml'
 local posix  = require'posix'
 local gsub = string.gsub
 
-local VERSION = '10.2.4-pre'
-
 local config_loaded = false
 
 local function find_static_dir()
