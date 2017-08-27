@@ -517,15 +517,6 @@ This project includes a copy of commonmark.js (`static/js/commonmark.min.js`),
 which is licensed under a BSD-style licnese. The commonmark.js license is
 available as LICENSE-commonmark-js
 
-This project includes a copy of lua-resty-redis (`resty/redis.lua`),
-which is licensed under a BSD license. The license for lua-resty-redis is
-available as LICENSE-lua-resty-redis
-
-This project includes a copy of lua-resty-websocket (`resty/websocket/protocol.lua`,
-`resty/websocket/client.lua`, `resty/websocket/server.lua`) which is license under
-a BSD license. The license for lua-resty-websocket is available as
-LICENSE-lua-resty-websocket.
-
 This project includes a copy of zenscroll (`static/js/zenscroll-min.js`), which
 is public-domain code. The license for zenscroll is availble as LICENSE-zenscroll.
 
