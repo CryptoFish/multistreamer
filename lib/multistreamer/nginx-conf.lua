@@ -44,8 +44,6 @@ http {
   }
 
   init_worker_by_lua_block {
-    lua_bin = '<%= lua_bin %>';
-
     networks = require('multistreamer.networks')
     uuid = require'resty.jit-uuid'
     chatmgr = require('multistreamer.chat_manager').new()

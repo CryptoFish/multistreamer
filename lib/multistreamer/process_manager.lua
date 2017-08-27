@@ -1,6 +1,5 @@
 -- luacheck: globals ngx bash_path lua_bin
 local ngx = ngx
-local bash_path = bash_path
 local lua_bin = lua_bin
 
 local config = require'multistreamer.config'.get()
@@ -10,9 +9,11 @@ local subscribe = redis.subscribe
 local from_json = require('lapis.util').from_json
 local to_json = require('lapis.util').to_json
 local Stream = require'multistreamer.models.stream'
+local shell = require'multistreamer.shell'
 local setmetatable = setmetatable
 local tonumber = tonumber
 local pairs = pairs
+local insert = insert or table.insert --luacheck: compat
 
 local exec_socket = require'resty.exec.socket'
 
@@ -28,8 +29,7 @@ local spawn = ngx.thread.spawn
 local streams_dict = ngx.shared.streams
 local status_dict = ngx.shared.status
 
-local function start_process(callback,client,...)
-  local args = {...}
+local function start_process(callback,client,process_args)
   return function()
     if not client then
       client = exec_socket:new({ timeout = 300000 }) -- 5 minutes
@@ -40,7 +40,7 @@ local function start_process(callback,client,...)
       status_dict:set('processmgr_error', true)
       return
     end
-    client:send_args(args)
+    client:send_args(process_args)
     local data, typ, err, errr
     ok = true
     while(not err) do
@@ -72,6 +72,7 @@ local function start_process(callback,client,...)
     return ok, errr
   end
 end
+
 
 local ProcessMgr = {}
 ProcessMgr.__index = ProcessMgr
@@ -141,6 +142,7 @@ function ProcessMgr:startPush(msg)
   end
 
   for _,sa in pairs(sas) do
+    local account = sa:get_account()
     local client = exec_socket:new({ timeout = 300000 }) -- 5 minutes
     local ok = client:connect(config.sockexec_path)
     if not ok then
@@ -151,9 +153,42 @@ function ProcessMgr:startPush(msg)
 
     self.pushers[stream.id][sa.account_id] = client
 
+    local ffmpeg_args = {
+      config.ffmpeg,
+      '-v',
+      'error',
+      '-copyts',
+      '-vsync',
+      '0',
+      '-i',
+      config.private_rtmp_url ..'/'.. config.rtmp_prefix ..'/'.. stream.uuid,
+    }
+    local args = {}
+
+    if account.ffmpeg_args and len(account.ffmpeg_args) > 0 then
+      args = shell.parse(account.ffmpeg_args)
+    end
+
+    if sa.ffmpeg_args and len(sa.ffmpeg_args) > 0 then
+      args = shell.parse(sa.ffmpeg_args)
+    end
+    if #args == 0 then
+      args = { '-c:v','copy','-c:a','copy' }
+    end
+
+    for _,v in pairs(args) do
+      insert(ffmpeg_args,v)
+    end
+
+    insert(ffmpeg_args,'-muxdelay')
+    insert(ffmpeg_args,'0')
+    insert(ffmpeg_args,'-f')
+    insert(ffmpeg_args,'flv')
+    insert(ffmpeg_args,sa.rtmp_url)
+
     spawn(start_process(function()
       self.pushers[stream.id][sa.account_id] = nil
-    end,client,bash_path,'-l',lua_bin,'-e',os.getenv('LAPIS_ENVIRONMENT'),'push',stream.id,sa.account_id))
+    end,client,ffmpeg_args))
   end
 
   return true
@@ -191,6 +226,20 @@ function ProcessMgr:startPull(msg)
   stream_status.data_pulling = true
   streams_dict:set(stream.id,to_json(stream_status))
 
+  local ffmpeg_args = {
+    '-v',
+    'error',
+  }
+
+  local args = shell.parse(stream.ffmpeg_pull_args)
+  for _,v in pairs(args) do
+    insert(ffmpeg_args,v)
+  end
+
+  insert(ffmpeg_args,'-f')
+  insert(ffmpeg_args,'flv')
+  insert(ffmpeg_args,config.private_rtmp_url ..'/'..config.rtmp_prefix..'/'..stream.uuid)
+
   spawn(start_process(function()
     local _stream_status = streams_dict:get(stream.id)
     if _stream_status then
@@ -205,7 +254,7 @@ function ProcessMgr:startPull(msg)
     _stream_status.data_pulling = false
     streams_dict:set(stream.id,to_json(_stream_status))
     self.pullers[stream.id] = nil
-  end,client,bash_path,'-l',lua_bin,'-e',os.getenv('LAPIS_ENVIRONMENT'),'pull',stream.id))
+  end,client,ffmpeg_args))
   self.pullers[stream.id] = client
 
   return true
@@ -239,3 +288,4 @@ function ProcessMgr:endPull(msg)
 end
 
 return ProcessMgr
+
