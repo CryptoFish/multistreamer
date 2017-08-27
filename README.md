@@ -71,7 +71,7 @@ Here's some guides on installing/using:
     + [Setup Authentication Server](#setup-authentication-server)
     + [Clone and setup](#clone-and-setup)
     + [Install Multistreamer](#install-multistreamer)
-    + [Global install](#global-install)
+      - [Global install](#global-install)
       - [Self-contained install](#self-contained-install)
     + [Initialize the database](#initialize-the-database)
     + [Customization](#customization)
@@ -287,7 +287,7 @@ Each module has more details in the [wiki.](https://github.com/jprjr/multistream
 
 ### Install Multistreamer
 
-### Global install
+#### Global install
 
 ```bash
 /opt/openresty/bin/luarocks install multistreamer
