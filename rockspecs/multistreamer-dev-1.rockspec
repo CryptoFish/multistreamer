@@ -2,7 +2,8 @@ package = "multistreamer"
 version = "dev-1"
 
 source = {
-  url = "..."
+  url = "https://github.com/jprjr/multistreamer/archive/reorg.tar.gz",
+  file = "multistreamer-reorg.tar.gz",
 }
 
 dependencies = {
