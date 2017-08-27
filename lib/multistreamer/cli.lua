@@ -112,6 +112,7 @@ local functions = {
     nof:write(nginx_conf(c))
     nof:close()
 
+    require'multistreamer.migrations'
     posix.exec(c['nginx'], { '-p', c['work_dir'], '-c', c['work_dir'] .. '/nginx.conf' } )
     return 0
   end,

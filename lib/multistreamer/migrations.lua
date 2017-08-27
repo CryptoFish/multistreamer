@@ -66,7 +66,7 @@ local schemas = {
       { 'value', types.text },
       { 'created_at', types.time },
       { 'updated_at', types.time },
-      { 'expires_at', types.time({ null: false }) },
+      { 'expires_at', types.time({ null = false }) },
       'FOREIGN KEY(stream_id) REFERENCES streams(id)',
       'FOREIGN KEY(account_id) REFERENCES accounts(id)',
     })
@@ -92,43 +92,69 @@ local schemas = {
   end,
 
   [1485788609] = function()
-
+    schema.create_table('shared_streams', {
+      { 'user_id', types.foreign_key },
+      { 'stream_id', types.foreign_key },
+      { 'chat_level', types.integer },
+      { 'metadata_level', types.integer },
+      { 'created_at', types.time },
+      { 'updated_at', types.time },
+      "PRIMARY KEY(user_id,stream_id)",
+      "FOREIGN KEY(user_id) REFERENCES users(id)",
+      "FOREIGN KEY(stream_id) REFEREnCES streams(id)",
+    })
   end,
+
   [1489949143] = function()
-
+    schema.add_column('streams','preview_required',types.integer)
+    schema.add_column('streams','ffmpeg_pull_args',types.text)
+    local Stream = require'multistreamer.models.stream'
+    local streams = Stream:select()
+    for _,v in ipairs(streams) do
+      v:update({ preview_required = 0 })
+    end
   end,
+
   [1492032677] = function()
-
+    schema.add_column('users','access_token',types.varchar)
+    local User = require'multistreamer.models.user'
+    local users = User:select()
+    for _,v in ipairs(users) do
+      v:reset_token()
+    end
   end,
+
   [1497734864] = function()
-
+    schema.create_table('shared_streams', {
+      { 'id', types.serial },
+      { 'stream_id', types.foreign_key },
+      { 'url', types.text },
+      { 'params', types.text },
+      { 'notes', types.text },
+      { 'type', types.varchar },
+      { 'created_at', types.time },
+      { 'updated_at', types.time },
+      "PRIMARY KEY(id)",
+      "FOREIGN KEY(stream_id) REFERENCES streams(id)",
+    })
   end,
+
   [1500610370] = function()
-
+    local Stream = require'multistreamer.models.stream'
+    local streams = Stream:select()
+    for _,v in ipairs(streams) do
+      if v.network == 'beam' then
+        v:update({ network = 'mixer' })
+      end
+    end
   end,
+
+  [1503806092] = function()
+    return true
+  end,
+
 }
 
-
 migrations.run_migrations(schemas)
-
--- 1485788609.sql
--- 1489949143.sql
--- 1492032677.sql
--- 1497734864.sql
--- 1500610370.sql
-
-
-
-create table if not exists shared_streams (
-  user_id integer references users(id),
-  stream_id integer references streams(id),
-  chat_level integer default 0,
-  metadata_level integer default 0,
-  created_at timestamp without time zone NOT NULL,
-  updated_at timestamp without time zone NOT NULL,
-  primary key(user_id,stream_id)
-);
-
-
 
 
