@@ -6,8 +6,8 @@ secret: 'CHANGEME'
 
 ### whether to log queries and requests
 logging:
-    queries: true
-    requests: true
+  queries: true
+  requests: true
 
 ### if deploying somewhere other than the root of a domain
 ### set this to your prefix (ie, '/multistreamer')
