@@ -4,7 +4,6 @@ local getopt = require'multistreamer.getopt'
 local config = require'multistreamer.config'
 local version = require'multistreamer.version'
 local pgmoon = require'pgmoon'
-local whereami = require'whereami'
 local lfs = require'lfs'
 
 local getenv = os.getenv

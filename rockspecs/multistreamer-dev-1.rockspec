@@ -15,7 +15,7 @@ dependencies = {
   "luacrypto",
   "luaposix",
   "luafilesystem",
-  "whereami",
+  "lyaml",
 }
 
 build = {

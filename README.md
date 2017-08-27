@@ -175,11 +175,11 @@ sudo make INSTALL_TOP="/opt/openresty-rtmp/luajit" TO_LIB="liblua.a liblua.so" i
 
 cd ../luarocks-2.4.2
 ./configure \
-  --prefix=/opt/openresty-rtmp \
-  --with-lua=/opt/openresty-rtmp/luajit \
-  --rocks-tree=/opt/openresty-rtmp/luajit
+  --prefix=/opt/openresty-rtmp/luajit \
+  --with-lua=/opt/openresty-rtmp/luajit
 make build
 sudo make bootstrap
+sudo ln -s /opt/openresty-rtmp/luajit/bin/luarocks /opt/openresty-rtmp/bin/luarocks
 ```
 
 ### Setup database and user in Postgres
