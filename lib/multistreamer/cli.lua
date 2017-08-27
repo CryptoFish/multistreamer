@@ -5,11 +5,14 @@ local config = require'multistreamer.config'
 local version = require'multistreamer.version'
 local pgmoon = require'pgmoon'
 local lfs = require'lfs'
+local redis = require'redis'
 
 local getenv = os.getenv
 local exit   = os.exit
 local len    = string.len
 local insert = table.insert
+local sub = string.sub
+local find = string.find
 
 local optarg, optind
 
@@ -75,6 +78,24 @@ local function try_load_config(check)
     return 1
   end
 
+  local redis_host = c.redis_host
+  local redis_port
+  local col_index = find(c.redis_host,':')
+  if col_index then
+    redis_host = sub(c.redis_host,1,col_index-1)
+    redis_port = tonumber(sub(c.redis_host,col_index+1))
+  else
+    redis_port = 6379
+  end
+
+  local _, err = pcall(function()
+    redis.connect(redis_host,redis_port)
+  end)
+  if err then
+    io.stderr:write('Unable to connect to redis: ' .. err .. '\n')
+    return 1
+  end
+
   if optarg['V'] then
     io.stderr:write(c['_raw'] .. '\n')
   end
@@ -121,6 +142,14 @@ local functions = {
       return res
     end
     return 0
+  end,
+
+  ['initdb'] = function()
+    local res = try_load_config()
+    if res ~= 0 then
+      return res
+    end
+    return require'multistreamer.migrations'
   end,
 }
 

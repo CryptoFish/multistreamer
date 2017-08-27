@@ -16,6 +16,7 @@ dependencies = {
   "luaposix",
   "luafilesystem",
   "lyaml",
+  "redis-lua",
 }
 
 build = {
